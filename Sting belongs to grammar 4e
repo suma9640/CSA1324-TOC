@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to check if the string contains '101' as a substring
+int contains_101(char *str) {
+    int len = strlen(str);
+    for (int i = 0; i < len - 2; i++) {
+        if (str[i] == '1' && str[i + 1] == '0' && str[i + 2] == '1') {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+// Function to check whether a string belongs to the grammar
+int belongs_to_grammar(char *str) {
+    // Check if the string contains '101' as a substring
+    if (!contains_101(str)) {
+        return 0;
+    }
+    
+    int len = strlen(str);
+    // Base case: Empty string
+    if (len == 0) {
+        return 1;
+    }
+
+    // Rule S -> A101A
+    if (str[0] == '1' && len >= 3 && str[1] == '0' && str[2] == '1') {
+        // Find the index where '101' ends
+        int i = 3;
+        while (i < len && str[i] == '1') {
+            i++;
+        }
+        // Check the substring between '101'
+        return belongs_to_grammar(str + i);
+    }
+
+    // Rule A -> 0A | 1A | e
+    if (str[0] == '0' || str[0] == '1') {
+        return belongs_to_grammar(str + 1);
+    }
+
+    return 0; // Not matching any production rule
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    scanf("%s", str);
+
+    if (belongs_to_grammar(str)) {
+        printf("The string belongs to the grammar.\n");
+    } else {
+        printf("The string does not belong to the grammar.\n");
+    }
+
+    return 0;
+}
