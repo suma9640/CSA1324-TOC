@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define the maximum length of the input string
+#define MAX_LEN 100
+
+// Define the stack structure
+typedef struct {
+    int top;
+    char items[MAX_LEN];
+} Stack;
+
+// Initialize the stack
+void initialize(Stack *s) {
+    s->top = -1;
+}
+
+// Check if the stack is empty
+int isEmpty(Stack *s) {
+    return s->top == -1;
+}
+
+// Check if the stack is full
+int isFull(Stack *s) {
+    return s->top == MAX_LEN - 1;
+}
+
+// Push an element onto the stack
+void push(Stack *s, char c) {
+    if (!isFull(s)) {
+        s->items[++(s->top)] = c;
+    } else {
+        printf("Stack Overflow\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+// Pop an element from the stack
+char pop(Stack *s) {
+    if (!isEmpty(s)) {
+        return s->items[(s->top)--];
+    } else {
+        printf("Stack Underflow\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+// Function to simulate the PDA
+int simulatePDA(char *input) {
+    Stack stack;
+    initialize(&stack);
+    int i = 0;
+
+    // Process the input string
+    while (input[i] != '\0') {
+        if (input[i] == '0') {
+            push(&stack, '0');
+        } else if (input[i] == '1') {
+            if (!isEmpty(&stack) && stack.items[stack.top] == '0') {
+                pop(&stack);
+            } else {
+                return 0; // Unbalanced parentheses
+            }
+        } else {
+            return 0; // Invalid input character
+        }
+        i++;
+    }
+
+    // Check if the stack is empty after processing the input
+    return isEmpty(&stack);
+}
+
+int main() {
+    char input[MAX_LEN];
+
+    // Input string
+    printf("Enter a string: ");
+    scanf("%s", input);
+
+    // Simulate the PDA
+    if (simulatePDA(input)) {
+        printf("Accepted\n");
+    } else {
+        printf("Rejected\n");
+    }
+
+    return 0;
+}
