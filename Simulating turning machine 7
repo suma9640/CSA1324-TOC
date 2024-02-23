@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LEN 100
+
+// Define the tape as a character array
+char tape[MAX_LEN];
+int head; // Current position of the head on the tape
+
+// Move the head of the Turing Machine left
+void moveLeft() {
+    head--;
+}
+
+// Move the head of the Turing Machine right
+void moveRight() {
+    head++;
+}
+
+// Write a symbol to the tape
+void writeSymbol(char symbol) {
+    tape[head] = symbol;
+}
+
+// Read a symbol from the tape
+char readSymbol() {
+    return tape[head];
+}
+
+// Function to simulate the Turing Machine
+int simulateTuringMachine(char *input) {
+    int n = strlen(input) / 3; // n is the number of 0s
+
+    // Initialize the tape
+    memset(tape, ' ', sizeof(tape));
+    head = MAX_LEN / 2; // Start at the middle of the tape
+
+    // Write the input symbols to the tape
+    for (int i = 0; i < n; i++) {
+        writeSymbol('0');
+    }
+    for (int i = 0; i < 2 * n; i++) {
+        writeSymbol('1');
+    }
+    writeSymbol('2');
+
+    // Move the head to the beginning of the tape
+    while (readSymbol() != '0') {
+        moveLeft();
+    }
+
+    // Check if the tape matches the expected format
+    for (int i = 0; i < n; i++) {
+        if (readSymbol() != '0') {
+            return 0; // Expected '0' not found
+        }
+        moveRight();
+    }
+    for (int i = 0; i < 2 * n; i++) {
+        if (readSymbol() != '1') {
+            return 0; // Expected '1' not found
+        }
+        moveRight();
+    }
+    if (readSymbol() != '2') {
+        return 0; // Expected '2' not found
+    }
+
+    // If everything is correct, return 1 (accept)
+    return 1;
+}
+
+int main() {
+    char input[MAX_LEN];
+
+    // Input string
+    printf("Enter a string: ");
+    scanf("%s", input);
+
+    // Simulate the Turing Machine
+    if (simulateTuringMachine(input)) {
+        printf("Accepted\n");
+    } else {
+        printf("Rejected\n");
+    }
+
+    return 0;
+}
